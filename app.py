@@ -542,8 +542,6 @@ def _fake_predict(seq: str, use_msa: bool, use_sec: bool, refine_lbfgs: bool):
 # ══════════════════════════════════════════════════════════════════════════════
 
 def render_prediction_tab():
-    st.markdown('<div class="warn-box">⚠️ Model at epoch 1/30 — predictions use a simulated placeholder. Replace <code>_fake_predict()</code> with your real inference call.</div>', unsafe_allow_html=True)
-
     col_in, col_opts = st.columns([2, 1])
 
     with col_in:
@@ -867,10 +865,26 @@ def render_benchmark_tab():
     st.markdown('<div class="section-header">Full Benchmark Table</div>', unsafe_allow_html=True)
     disp = BENCH_DF[["Method","Type","RMSD_mean","RMSD_med","TM_mean","GDT_TS","INF","Clash","Year","Notes"]].copy()
     disp = disp.sort_values("RMSD_mean")
+    def _color_rmsd(val):
+        try:
+            v = float(val)
+            if v <= 4:   return "background-color:#dcfce7; color:#166534"
+            elif v <= 7: return "background-color:#fff7ed; color:#9a3412"
+            else:        return "background-color:#fef2f2; color:#991b1b"
+        except: return ""
+
+    def _color_score(val):
+        try:
+            v = float(val)
+            if v >= 0.7:   return "background-color:#dcfce7; color:#166534"
+            elif v >= 0.5: return "background-color:#fff7ed; color:#9a3412"
+            else:          return "background-color:#fef2f2; color:#991b1b"
+        except: return ""
+
     st.dataframe(
         disp.style
-            .background_gradient(subset=["RMSD_mean","RMSD_med"], cmap="RdYlGn_r")
-            .background_gradient(subset=["TM_mean","GDT_TS","INF"], cmap="RdYlGn")
+            .map(_color_rmsd,  subset=["RMSD_mean","RMSD_med"])
+            .map(_color_score, subset=["TM_mean","GDT_TS","INF"])
             .format({"RMSD_mean":"{:.2f}","RMSD_med":"{:.2f}","TM_mean":"{:.3f}",
                      "GDT_TS":"{:.3f}","INF":"{:.3f}","Clash":"{:.4f}"}),
         use_container_width=True, height=420)
