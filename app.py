@@ -573,13 +573,6 @@ def render_prediction_tab():
             st.caption(f"{len(msa_lines)} MSA sequences loaded")
 
         st.markdown("---")
-        st.markdown("""
-<div style="font-family:DM Mono,monospace;font-size:10px;color:#6b7280;line-height:1.7;text-transform:uppercase;letter-spacing:.05em;">
-<b style="color:#1c1917;font-size:11px;">MSA</b> — homologous sequences from related organisms improve accuracy by revealing conserved contacts. Without MSA the model runs single-sequence only.<br><br>
-<b style="color:#1c1917;font-size:11px;">Secondary structure</b> — a known dot-bracket string constrains the fold. Leaving it empty lets the model predict freely.<br><br>
-<b style="color:#1c1917;font-size:11px;">Multi-chain</b> — RhoFold predicts <b>one chain at a time</b>. For complexes (e.g. ribosome), predict each chain separately then visualise together in the Explore tab using the PDB selector. True multi-chain co-folding requires a complex-aware model.
-</div>
-""", unsafe_allow_html=True)
 
     # validate
     clean_seq = "".join(c for c in seq_input.upper() if c in "AUGC")
