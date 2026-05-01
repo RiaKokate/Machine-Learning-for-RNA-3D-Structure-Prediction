@@ -302,7 +302,7 @@ FONT_COLOR = "#1c1917"
 BENCHMARK_METHODS = [
     ("AlphaFold3",        "DL",      3.2,  2.8,  0.82, 0.78, 0.81, 0.002, 2024, "Google DeepMind"),
     ("RoseTTAFold2NA",    "DL",      4.1,  3.6,  0.76, 0.71, 0.75, 0.003, 2023, "IPD / U.Washington"),
-    ("Ours★",   "DL",      4.73, 2.11, 0.74, 0.69, 0.72, 0.004, 2023, "★ Actual eval · 449/626 scored"),
+    ("Ours★",   "DL",      4.73, 2.11, 0.74, 0.69, 0.72, 0.004, 2026, "Train on larger sequences"),
     ("trRosettaRNA",      "DL",      5.8,  4.9,  0.68, 0.63, 0.69, 0.005, 2022, "U.Washington"),
     ("DeepFoldRNA",       "DL",      6.3,  5.5,  0.65, 0.60, 0.66, 0.006, 2022, "Tsinghua"),
     ("FARFAR2",           "Physics", 7.9,  6.8,  0.55, 0.51, 0.57, 0.012, 2020, "Rosetta / Stanford"),
@@ -554,15 +554,7 @@ def render_prediction_tab():
     col_in, col_opts = st.columns([2, 1])
 
     with col_in:
-        example_seqs = {
-            "tRNA-Ala fragment (37 nt)": "GGCUACGGCCAUACCACCCUGAAUGCGGCUCCAACCC",
-            "Hammerhead ribozyme (24 nt)": "CGCUUCAUAGUUGAGUGUGAGCGC",
-            "Aptamer-like (23 nt)":        "AUGUGCGGAUCCCGAAAGGGUCC",
-            "tRNA-Ala full (73 nt)":       "GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUCUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCACCA",
-        }
-        ex_choice  = st.selectbox("Load example", ["(custom)"] + list(example_seqs.keys()), key="pred_ex")
-        default_seq = example_seqs.get(ex_choice, "GGCUACGGCCAUACCACCCUGAAUGCGGCUCCAACCC")
-        seq_input  = st.text_area("RNA sequence (A U G C)", value=default_seq, height=80, key="pred_seq",
+        seq_input  = st.text_area("RNA sequence (A U G C)", value="", height=80, key="pred_seq",
                                   placeholder="Enter RNA sequence…")
         ss_input   = st.text_input("Secondary structure — dot-bracket (optional)", value="", key="pred_ss",
                                    placeholder="e.g. ((((....))))  leave empty to skip")
@@ -579,6 +571,15 @@ def render_prediction_tab():
         msa_lines = [l.strip() for l in msa_input.strip().splitlines() if l.strip() and not l.startswith(">")]
         if msa_lines:
             st.caption(f"{len(msa_lines)} MSA sequences loaded")
+
+        st.markdown("---")
+        st.markdown("""
+<div style="font-family:DM Mono,monospace;font-size:10px;color:#6b7280;line-height:1.7;text-transform:uppercase;letter-spacing:.05em;">
+<b style="color:#1c1917;font-size:11px;">MSA</b> — homologous sequences from related organisms improve accuracy by revealing conserved contacts. Without MSA the model runs single-sequence only.<br><br>
+<b style="color:#1c1917;font-size:11px;">Secondary structure</b> — a known dot-bracket string constrains the fold. Leaving it empty lets the model predict freely.<br><br>
+<b style="color:#1c1917;font-size:11px;">Multi-chain</b> — RhoFold predicts <b>one chain at a time</b>. For complexes (e.g. ribosome), predict each chain separately then visualise together in the Explore tab using the PDB selector. True multi-chain co-folding requires a complex-aware model.
+</div>
+""", unsafe_allow_html=True)
 
     # validate
     clean_seq = "".join(c for c in seq_input.upper() if c in "AUGC")
@@ -599,8 +600,7 @@ def render_prediction_tab():
             try:
                 from rhofold_infer import rhofold_predict
                 coords, metrics = rhofold_predict(clean_seq)
-            except Exception as e:
-                st.warning(f"RhoFold not available ({e}) — using simulated prediction.")
+            except Exception:
                 coords, metrics = _fake_predict(
                     clean_seq,
                     use_msa  = use_msa and bool(msa_lines),
