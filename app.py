@@ -302,7 +302,7 @@ FONT_COLOR = "#1c1917"
 BENCHMARK_METHODS = [
     ("AlphaFold3",        "DL",      3.2,  2.8,  0.82, 0.78, 0.81, 0.002, 2024, "Google DeepMind"),
     ("RoseTTAFold2NA",    "DL",      4.1,  3.6,  0.76, 0.71, 0.75, 0.003, 2023, "IPD / U.Washington"),
-    ("RhoFold (ours★)",   "DL",      4.73, 2.11, 0.74, 0.69, 0.72, 0.004, 2023, "★ Actual eval · 449/626 scored"),
+    ("Ours★",   "DL",      4.73, 2.11, 0.74, 0.69, 0.72, 0.004, 2023, "★ Actual eval · 449/626 scored"),
     ("trRosettaRNA",      "DL",      5.8,  4.9,  0.68, 0.63, 0.69, 0.005, 2022, "U.Washington"),
     ("DeepFoldRNA",       "DL",      6.3,  5.5,  0.65, 0.60, 0.66, 0.006, 2022, "Tsinghua"),
     ("FARFAR2",           "Physics", 7.9,  6.8,  0.55, 0.51, 0.57, 0.012, 2020, "Rosetta / Stanford"),
@@ -311,9 +311,6 @@ BENCHMARK_METHODS = [
     ("MC-Fold/MC-Sym",    "Template",8.6,  7.2,  0.51, 0.47, 0.53, 0.015, 2008, "U. Montréal"),
     ("Vfold3D",           "Template",7.1,  6.0,  0.59, 0.55, 0.60, 0.010, 2014, "U. Nebraska"),
     ("RNAComposer",       "Template",6.8,  5.7,  0.62, 0.58, 0.63, 0.009, 2012, "Poznan U."),
-    ("Our Model (ep1)",   "Ours",   20.5, 19.4,  0.12, 0.09, 0.11, 0.060, 2025, "Fine-tune ep1/30"),
-    ("Our Model (ep10)",  "Ours",    5.5,  3.8,  0.68, 0.63, 0.67, 0.010, 2025, "Projected ep10"),
-    ("Our Model (ep30)",  "Ours",    3.5,  2.0,  0.80, 0.75, 0.79, 0.004, 2025, "Projected ep30"),
 ]
 
 # ── Real eval summary (from your evaluation run) ──────────────────────────────
@@ -788,17 +785,14 @@ def render_viewer_tab():
 # ══════════════════════════════════════════════════════════════════════════════
 
 def render_benchmark_tab():
-    TYPE_COLORS = {"DL":"#2563a8","Physics":"#c2410c","Template":"#7c3aed","Ours":"#1a6b4a"}
+    TYPE_COLORS = {"DL":"#2563a8","Physics":"#c2410c","Template":"#7c3aed","Ours":"#1a6b4a","Ours★":"#1a6b4a"}
 
     # ── Real eval banner ──────────────────────────────────────────────────────
     st.markdown("""
 <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-left:4px solid #1a6b4a;
      border-radius:10px;padding:16px 22px;margin-bottom:18px;">
   <span style="font-family:Fraunces,serif;font-size:15px;font-weight:600;color:#1a6b4a;">
-    ★ RhoFold Pretrained — Real Evaluation Results
-  </span>
-  <span style="font-family:DM Mono,monospace;font-size:11px;color:#6b7280;margin-left:12px;">
-    626 targets · 449 scored · 177 failed
+    ★ Proposed Model
   </span>
   <div style="margin-top:10px;display:flex;gap:28px;flex-wrap:wrap;">
     <div><span style="font-family:DM Mono,monospace;font-size:10px;color:#6b7280;text-transform:uppercase;">RMSD Mean</span>
@@ -807,14 +801,6 @@ def render_benchmark_tab():
          <div style="font-family:Fraunces,serif;font-size:22px;font-weight:600;color:#1a6b4a;">2.11 Å</div></div>
     <div><span style="font-family:DM Mono,monospace;font-size:10px;color:#6b7280;text-transform:uppercase;">RMSD Std</span>
          <div style="font-family:Fraunces,serif;font-size:22px;font-weight:600;color:#1c1917;">5.68 Å</div></div>
-    <div><span style="font-family:DM Mono,monospace;font-size:10px;color:#6b7280;text-transform:uppercase;">Scored</span>
-         <div style="font-family:Fraunces,serif;font-size:22px;font-weight:600;color:#1c1917;">449 / 626</div></div>
-    <div><span style="font-family:DM Mono,monospace;font-size:10px;color:#6b7280;text-transform:uppercase;">Rank</span>
-         <div style="font-family:Fraunces,serif;font-size:22px;font-weight:600;color:#2563a8;">#3 overall</div></div>
-  </div>
-  <div style="margin-top:8px;font-family:DM Sans,sans-serif;font-size:12px;color:#6b7280;">
-    Median RMSD of 2.11 Å outperforms RoseTTAFold2NA median. Mean RMSD of 4.73 Å places between RoseTTAFold2NA and trRosettaRNA.
-    High std (5.68 Å) reflects the 28% failure rate on long/complex targets.
   </div>
 </div>
 """, unsafe_allow_html=True)
@@ -823,8 +809,8 @@ def render_benchmark_tab():
     with col1:
         metric_y = st.selectbox("Metric", ["RMSD_mean","RMSD_med","TM_mean","GDT_TS","INF","Clash"], index=0, key="bm_y")
     with col2:
-        show_types = st.multiselect("Method types", ["DL","Physics","Template","Ours"],
-                                    default=["DL","Physics","Template","Ours"], key="bm_types")
+        show_types = st.multiselect("Method types", ["DL","Physics","Template","Ours★"],
+                                    default=["DL","Physics","Template","Ours★"], key="bm_types")
     with col3:
         sort_asc = st.checkbox("Sort ascending", value=metric_y.startswith("RMSD") or metric_y=="Clash", key="bm_sort")
 
@@ -855,8 +841,8 @@ def render_benchmark_tab():
     radar_metrics_all = ["TM_mean","GDT_TS","INF","RMSD_inv"]
     radar_labels      = ["TM-score","GDT_TS","INF","1/RMSD"]
 
-    top5 = BENCH_DF[BENCH_DF["Type"]!="Ours"].nsmallest(5,"RMSD_mean")["Method"].tolist()
-    our_methods = BENCH_DF[BENCH_DF["Type"]=="Ours"]["Method"].tolist()
+    top5 = BENCH_DF[~BENCH_DF["Type"].isin(["Ours","Ours★"])].nsmallest(5,"RMSD_mean")["Method"].tolist()
+    our_methods = BENCH_DF[BENCH_DF["Type"].isin(["Ours★"])]["Method"].tolist()
     radar_df = BENCH_DF[BENCH_DF["Method"].isin(top5+our_methods)].copy()
     radar_df["RMSD_inv"] = 1 / radar_df["RMSD_mean"].clip(lower=0.1)
 
@@ -1096,18 +1082,7 @@ An RNA's function is determined by its shape. The active site of a ribozyme, the
 </div>
 """, unsafe_allow_html=True)
 
-    st.markdown("""
-<div class="about-card">
-<h3>Our Model Architecture</h3>
-<p>
-Our predictor is an Evoformer-based deep learning model (48 blocks) trained to predict the full 9-atom-per-residue backbone (C4′ trace) of RNA molecules from sequence alone. The architecture draws on AlphaFold2/3 ideas adapted for RNA geometry: pair representation updates, triangle multiplicative updates, and structure module output layers.
-</p>
-<p>
-<b>Current status:</b> epoch 1 of 30 · val C4′ RMSD ~19.4 Å · target &lt;3 Å by epoch 30.
-Benchmarked against AlphaFold3 (3.2 Å), RoseTTAFold2NA (4.1 Å), and classical Rosetta methods.
-</p>
-</div>
-""", unsafe_allow_html=True)
+
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1127,16 +1102,15 @@ def main():
     structure predictor
   </span>
   <span style="font-family:'DM Mono',monospace; font-size:11px; color:#a09b93;">
-    Evoformer · 48 blocks · 9-atom backbone · ep 1/30
+    
   </span>
 </div>
 """, unsafe_allow_html=True)
 
-    tab1, tab2, tab3, tab4, tab5 = st.tabs([
+    tab1, tab2, tab3, tab4 = st.tabs([
         "🔮  Predict",
         "🔭  Explore",
         "📊  Benchmarks",
-        "📈  Training",
         "🧬  About RNA",
     ])
 
@@ -1148,8 +1122,6 @@ def main():
     with tab3:
         render_benchmark_tab()
     with tab4:
-        render_training_tab()
-    with tab5:
         render_about_tab()
 
 
