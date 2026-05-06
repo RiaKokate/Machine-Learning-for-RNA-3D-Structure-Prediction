@@ -302,7 +302,7 @@ FONT_COLOR = "#1c1917"
 BENCHMARK_METHODS = [
     ("AlphaFold3",        "DL",      3.2,  2.8,  0.82, 0.78, 0.81, 0.002, 2024, "Google DeepMind"),
     ("RoseTTAFold2NA",    "DL",      4.1,  3.6,  0.76, 0.71, 0.75, 0.003, 2023, "IPD / U.Washington"),
-    ("Ours★",   "DL",      4.73, 2.11, 0.74, 0.69, 0.72, 0.004, 2026, "Train on larger sequences"),
+    ("RNA3D★",   "DL",      4.73, 2.11, 0.74, 0.69, 0.72, 0.004, 2026, "Rutgers Camden"),
     ("trRosettaRNA",      "DL",      5.8,  4.9,  0.68, 0.63, 0.69, 0.005, 2022, "U.Washington"),
     ("DeepFoldRNA",       "DL",      6.3,  5.5,  0.65, 0.60, 0.66, 0.006, 2022, "Tsinghua"),
     ("FARFAR2",           "Physics", 7.9,  6.8,  0.55, 0.51, 0.57, 0.012, 2020, "Rosetta / Stanford"),
@@ -573,13 +573,7 @@ def render_prediction_tab():
             st.caption(f"{len(msa_lines)} MSA sequences loaded")
 
         st.markdown("---")
-        st.markdown("""
-<div style="font-family:DM Mono,monospace;font-size:10px;color:#6b7280;line-height:1.7;text-transform:uppercase;letter-spacing:.05em;">
-<b style="color:#1c1917;font-size:11px;">MSA</b> — homologous sequences from related organisms improve accuracy by revealing conserved contacts. Without MSA the model runs single-sequence only.<br><br>
-<b style="color:#1c1917;font-size:11px;">Secondary structure</b> — a known dot-bracket string constrains the fold. Leaving it empty lets the model predict freely.<br><br>
-<b style="color:#1c1917;font-size:11px;">Multi-chain</b> — RhoFold predicts <b>one chain at a time</b>. For complexes (e.g. ribosome), predict each chain separately then visualise together in the Explore tab using the PDB selector. True multi-chain co-folding requires a complex-aware model.
-</div>
-""", unsafe_allow_html=True)
+        
 
     # validate
     clean_seq = "".join(c for c in seq_input.upper() if c in "AUGC")
@@ -785,7 +779,7 @@ def render_viewer_tab():
 # ══════════════════════════════════════════════════════════════════════════════
 
 def render_benchmark_tab():
-    TYPE_COLORS = {"DL":"#2563a8","Physics":"#c2410c","Template":"#7c3aed","Ours":"#1a6b4a","Ours★":"#1a6b4a"}
+    TYPE_COLORS = {"DL":"#2563a8","Physics":"#c2410c","Template":"#7c3aed","RNA3D":"#1a6b4a","RNA3D★":"#1a6b4a"}
 
     # ── Real eval banner ──────────────────────────────────────────────────────
     st.markdown("""
@@ -809,8 +803,8 @@ def render_benchmark_tab():
     with col1:
         metric_y = st.selectbox("Metric", ["RMSD_mean","RMSD_med","TM_mean","GDT_TS","INF","Clash"], index=0, key="bm_y")
     with col2:
-        show_types = st.multiselect("Method types", ["DL","Physics","Template","Ours★"],
-                                    default=["DL","Physics","Template","Ours★"], key="bm_types")
+        show_types = st.multiselect("Method types", ["DL","Physics","Template","RNA3D★"],
+                                    default=["DL","Physics","Template","RNA3D★"], key="bm_types")
     with col3:
         sort_asc = st.checkbox("Sort ascending", value=metric_y.startswith("RMSD") or metric_y=="Clash", key="bm_sort")
 
@@ -841,8 +835,8 @@ def render_benchmark_tab():
     radar_metrics_all = ["TM_mean","GDT_TS","INF","RMSD_inv"]
     radar_labels      = ["TM-score","GDT_TS","INF","1/RMSD"]
 
-    top5 = BENCH_DF[~BENCH_DF["Type"].isin(["Ours","Ours★"])].nsmallest(5,"RMSD_mean")["Method"].tolist()
-    our_methods = BENCH_DF[BENCH_DF["Type"].isin(["Ours★"])]["Method"].tolist()
+    top5 = BENCH_DF[~BENCH_DF["Type"].isin(["RNA3D","RNA3D★"])].nsmallest(5,"RMSD_mean")["Method"].tolist()
+    our_methods = BENCH_DF[BENCH_DF["Type"].isin(["RNA3D★"])]["Method"].tolist()
     radar_df = BENCH_DF[BENCH_DF["Method"].isin(top5+our_methods)].copy()
     radar_df["RMSD_inv"] = 1 / radar_df["RMSD_mean"].clip(lower=0.1)
 
