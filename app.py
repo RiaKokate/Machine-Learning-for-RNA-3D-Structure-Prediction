@@ -25,7 +25,6 @@ else:
 # ── page config ────────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="RNA3D · Structure Predictor",
-    page_icon="🧬",
     layout="wide",
     initial_sidebar_state="expanded",
 )
