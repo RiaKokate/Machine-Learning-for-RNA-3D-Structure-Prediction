@@ -302,7 +302,7 @@ FONT_COLOR = "#1c1917"
 BENCHMARK_METHODS = [
     ("AlphaFold3",        "DL",      3.2,  2.8,  0.82, 0.78, 0.81, 0.002, 2024, "Google DeepMind"),
     ("RoseTTAFold2NA",    "DL",      4.1,  3.6,  0.76, 0.71, 0.75, 0.003, 2023, "IPD / U.Washington"),
-    ("RNA3D★",   "DL",      4.73, 2.11, 0.74, 0.69, 0.72, 0.004, 2026, "Train on larger sequences"),
+    ("RNA3D★",   "DL",      4.73, 2.11, 0.74, 0.69, 0.72, 0.004, 2026, "RutgersCamden"),
     ("trRosettaRNA",      "DL",      5.8,  4.9,  0.68, 0.63, 0.69, 0.005, 2022, "U.Washington"),
     ("DeepFoldRNA",       "DL",      6.3,  5.5,  0.65, 0.60, 0.66, 0.006, 2022, "Tsinghua"),
     ("FARFAR2",           "Physics", 7.9,  6.8,  0.55, 0.51, 0.57, 0.012, 2020, "Rosetta / Stanford"),
@@ -325,7 +325,7 @@ REAL_EVAL = {
 }
 
 BENCH_DF = pd.DataFrame(BENCHMARK_METHODS,
-    columns=["Method","Type","RMSD_mean","RMSD_med","TM_mean","GDT_TS","INF","Clash","Year","Notes"])
+    columns=["Method","Type","RMSD_mean","RMSD_med","TM_mean","GDT_TS","INF","Clash","Year","Author"])
 
 
 # ── helpers ────────────────────────────────────────────────────────────────────
