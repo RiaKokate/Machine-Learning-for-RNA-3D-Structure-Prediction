@@ -1,0 +1,77 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project outputs (regenerate locally)
+eval_out/
+eval_out_*/
+checkpoints_v*/
+*.out
+*.err
+
+# Large / local artifacts — do not commit to GitHub
+*.pt
+*.pth
+*.ckpt
+checkpoints/*.pt
+!checkpoints/.gitkeep
+
+data/**/*.pdb
+data/**/*.a3m
+data/**/*.sto
+data/**/*.zip
+data/**/*.csv
+data/**/pdb/
+data/**/msa/
+data/**/list/
+
+# Local full dataset mirror (pdb/msa/list)
+data_with_pdb/**/*.pdb
+data_with_pdb/**/*.a3m
+data_with_pdb/**/pdb/
+data_with_pdb/**/msa/
+data_with_pdb/**/list/
+
+# Optional: keep small lists only — remove the line below if you version split lists
+# !data/dataset/list/*.txt
+
+# IDE
+.idea/
+.vscode/
+
+# Secrets / local env
+.env
+.env.*
+checkpoints/
+data/
+*.pt
+*.pth
+*.ckpt
+*.pkl
+*.npy
+*.npz
+
+# Rfam full-family databases (hundreds of MB) — do not commit; fetch from rfam.org if needed
+rfam/*.cm
+rfam/*.cm.gz
+rfam/*.fa
+rfam/*.fa.gz

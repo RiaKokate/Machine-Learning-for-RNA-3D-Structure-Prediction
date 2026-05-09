@@ -1,6 +1,8 @@
-streamlit
-pandas
-numpy
-plotly
-pyarrow
-gdown
+# RNA 3D folding (rna.py) — use a virtual environment.
+# NumPy 2.x can break some PyTorch wheels built against NumPy 1.x.
+numpy>=1.22,<2.0
+pandas>=1.4
+tqdm>=4.64
+matplotlib>=3.5
+biopython>=1.79
+torch>=2.0
